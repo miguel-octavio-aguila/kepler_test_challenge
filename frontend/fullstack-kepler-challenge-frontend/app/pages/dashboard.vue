@@ -2,6 +2,7 @@
 import { useAuthStore } from '~/stores/auth.store';
 import TaskList from '~/components/TaskList.vue';
 import TaskForm from '~/components/TaskForm.vue';
+import TaskFilters from '~/components/TaskFilters.vue';
 
 definePageMeta({
   middleware: 'auth'
@@ -32,6 +33,8 @@ const authStore = useAuthStore();
         <section>
           <TaskForm />
         </section>
+
+        <TaskFilters />
 
         <!-- Task List -->
         <section>

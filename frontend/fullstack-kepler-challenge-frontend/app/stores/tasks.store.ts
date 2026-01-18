@@ -14,6 +14,8 @@ export const useTasksStore = defineStore('tasks', {
     tasks: [] as Task[], // Local cache of tasks
     isLoading: false,
     error: null as string | null,
+    filterStatus: 'all' as 'all' | 'pending' | 'completed',
+    searchQuery: '',
   }),
 
   actions: {
@@ -77,11 +79,37 @@ export const useTasksStore = defineStore('tasks', {
       } catch (err: any) {
         console.error('Failed to update task', err);
       }
+    },
+
+    setFilter(status: 'all' | 'pending' | 'completed') {
+    this.filterStatus = status;
+    },
+
+    setSearch(query: string) {
+    this.searchQuery = query;
     }
   },
 
   getters: {
-    // Useful for showing "You have 3 pending tasks"
+    // Useful for filtering tasks based on status and search query
+    filteredTasks: (state) => {
+      return state.tasks.filter(task => {
+        // Filter by status
+        const matchesStatus = 
+          state.filterStatus === 'all' ? true :
+          state.filterStatus === 'completed' ? task.completed :
+          !task.completed;
+
+        // Filter by search query
+        const query = state.searchQuery.toLowerCase();
+        const matchesSearch = 
+          task.title.toLowerCase().includes(query) || 
+          (task.description && task.description.toLowerCase().includes(query));
+
+        return matchesStatus && matchesSearch;
+      });
+    },
+  
     pendingCount: (state) => state.tasks.filter(t => !t.completed).length,
   }
 });

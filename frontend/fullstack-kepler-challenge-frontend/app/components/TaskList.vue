@@ -10,12 +10,10 @@ onMounted(() => {
 
 <template>
   <div>
-    <!-- Loading State -->
     <div v-if="tasksStore.isLoading" class="space-y-3 py-4">
       <div v-for="i in 3" :key="i" class="h-16 bg-gray-100 rounded-xl animate-pulse"></div>
     </div>
 
-    <!-- Empty State -->
     <div v-else-if="tasksStore.tasks.length === 0" class="text-center py-16 px-4">
       <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
         <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -26,7 +24,6 @@ onMounted(() => {
       <p class="mt-1 text-sm text-gray-500">Get started by creating a new task above.</p>
     </div>
 
-    <!-- Task List -->
     <TransitionGroup 
       v-else 
       name="list" 
@@ -34,12 +31,11 @@ onMounted(() => {
       class="space-y-3"
     >
       <li 
-        v-for="task in tasksStore.tasks" 
+        v-for="task in tasksStore.filteredTasks" 
         :key="task.id"
         class="group relative flex items-start gap-3 bg-white p-4 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-gray-200"
         :class="{ 'opacity-60 bg-gray-50/80': task.completed }"
       >
-        <!-- Custom Checkbox -->
         <button 
           @click="tasksStore.toggleTask(task.id, task.completed)"
           class="mt-1 flex-shrink-0 w-5 h-5 rounded border transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
@@ -77,6 +73,18 @@ onMounted(() => {
         </button>
       </li>
     </TransitionGroup>
+
+    <div 
+      v-if="!tasksStore.isLoading && tasksStore.filteredTasks.length === 0 && tasksStore.tasks.length > 0" 
+      class="text-center py-12 px-4"
+    >
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 mb-4">
+        <span class="text-2xl">🔍</span>
+      </div>
+      <h3 class="text-sm font-medium text-gray-900">No matching tasks found</h3>
+      <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+    </div>
+
   </div>
 </template>
 
