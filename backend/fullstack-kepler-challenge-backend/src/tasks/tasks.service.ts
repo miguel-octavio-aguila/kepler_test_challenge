@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -17,15 +17,61 @@ export class TasksService {
     return this.prisma.task.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.task.findUnique({ where: { id } });
+  async findOne(id: number) {
+    const taskFound = await this.prisma.task.findUnique({ where: { id: id } });
+    if (!taskFound) {
+      throw new NotFoundException('Task not found');
+    }
+    return taskFound;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return this.prisma.task.update({ where: { id }, data: updateTaskDto });
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
+    // First check if task exists
+    const taskExists = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!taskExists) {
+      throw new NotFoundException('Task not found');
+    }
+
+    // If exists, update it
+    return this.prisma.task.update({
+      where: { id },
+      data: updateTaskDto,
+    });
   }
 
-  remove(id: number) {
-    return this.prisma.task.delete({ where: { id } });
+  async remove(id: number) {
+    // First check if task exists
+    const taskExists = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!taskExists) {
+      throw new NotFoundException('Task not found');
+    }
+
+    // If exists, delete it
+    return this.prisma.task.delete({
+      where: { id },
+    });
+  }
+
+  async toggleComplete(id: number) {
+    // First check if task exists
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    // Toggle the completed status
+    return this.prisma.task.update({
+      where: { id },
+      data: { completed: !task.completed },
+    });
   }
 }
