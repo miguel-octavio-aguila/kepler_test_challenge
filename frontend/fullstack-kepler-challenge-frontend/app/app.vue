@@ -1,10 +1,5 @@
-<script setup>
-  const { $api } = useNuxtApp()
-  console.log('API Base URL:', $api.defaults.baseURL)
-</script>
-
 <template>
-  <div class="p-10">
-    <h1 class="text-2xl">Revisa la consola del navegador (F12)</h1>
+  <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <NuxtPage />
   </div>
 </template>
