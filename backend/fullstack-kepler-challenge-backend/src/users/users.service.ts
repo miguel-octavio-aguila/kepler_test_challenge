@@ -1,7 +1,6 @@
 import {
   ConflictException,
   NotFoundException,
-  UnauthorizedException,
   Injectable,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -64,6 +63,18 @@ export class UsersService {
     return userFound;
   }
 
+  async findByEmail(email: string) {
+    const userFound = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!userFound) {
+      throw new NotFoundException('User not found');
+    }
+
+    return userFound;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const userFound = await this.prisma.user.findUnique({
       where: { id },
@@ -91,34 +102,5 @@ export class UsersService {
     return this.prisma.user.delete({
       where: { id },
     });
-  }
-
-  async login(email: string, password: string) {
-    const userFound = await this.prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!userFound) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      userFound.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const payload = {
-      sub: userFound.id,
-      email: userFound.email,
-      name: userFound.name,
-    };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 }

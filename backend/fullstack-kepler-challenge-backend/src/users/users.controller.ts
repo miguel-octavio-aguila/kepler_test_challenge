@@ -20,12 +20,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Post('login')
-  login(@Body() createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
-    return this.usersService.login(email, password);
-  }
-
   @Get()
   findAll() {
     return this.usersService.findAll();
