@@ -5,34 +5,33 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const handleLogout = () => {
-  // 1. Clear state/cookies
   authStore.logout();
-  // 2. Redirect to login
   router.push('/login');
 };
 </script>
 
 <template>
-  <nav class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
+  <nav class="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-14">
         
         <div class="flex items-center">
-          <h1 class="text-xl font-bold text-indigo-600">
-            TaskApp
-          </h1>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-8 bg-primary rounded-full"></span>
+            <span class="text-lg font-semibold text-gray-900 tracking-tight">Kepler</span>
+          </div>
         </div>
 
-        <div class="flex items-center gap-4">
-          <span v-if="authStore.user" class="text-sm text-gray-500">
+        <div class="flex items-center gap-6">
+          <span v-if="authStore.user" class="hidden sm:block text-sm text-gray-500">
             {{ authStore.user.email }}
           </span>
 
           <button 
             @click="handleLogout"
-            class="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
+            class="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors"
           >
-            Logout
+            Sign out
           </button>
         </div>
 

@@ -5,18 +5,17 @@ const tasksStore = useTasksStore();
 const title = ref('');
 const description = ref('');
 const isSubmitting = ref(false);
+const titleInput = ref<HTMLInputElement | null>(null);
 
 const handleSubmit = async () => {
   if (!title.value.trim()) return;
 
   isSubmitting.value = true;
   try {
-    // Call the store action
     await tasksStore.createTask(title.value, description.value);
-    
-    // Reset form
     title.value = '';
     description.value = '';
+    titleInput.value?.focus();
   } catch (error) {
     alert('Error creating task');
   } finally {
@@ -26,36 +25,43 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-    <h3 class="text-lg font-semibold text-gray-700 mb-4">Create New Task</h3>
+  <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+    <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Add New Task</h3>
     
     <form @submit.prevent="handleSubmit" class="space-y-4">
-      <div>
+      <div class="space-y-4">
         <input 
+          ref="titleInput"
           v-model="title"
           type="text" 
           placeholder="What needs to be done?" 
-          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          class="block w-full border-0 border-b-2 border-gray-100 bg-transparent px-0 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:ring-0 sm:text-lg font-medium transition-colors"
           required
         />
-      </div>
-
-      <div>
+        
         <textarea 
           v-model="description"
-          placeholder="Description (optional)" 
+          placeholder="Add details (optional)" 
           rows="2"
-          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          class="block w-full rounded-lg border-0 bg-gray-50 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary/10 sm:text-sm sm:leading-6 resize-none transition-all"
         ></textarea>
       </div>
 
-      <button 
-        type="submit" 
-        :disabled="isSubmitting"
-        class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-      >
-        {{ isSubmitting ? 'Adding...' : 'Add Task' }}
-      </button>
+      <div class="flex justify-end pt-2">
+        <button 
+          type="submit" 
+          :disabled="isSubmitting || !title.trim()"
+          class="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+        >
+          <span v-if="isSubmitting" class="mr-2">
+            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </span>
+          {{ isSubmitting ? 'Adding...' : 'Add Task' }}
+        </button>
+      </div>
     </form>
   </div>
 </template>
