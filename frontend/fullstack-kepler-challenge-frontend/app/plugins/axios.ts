@@ -18,9 +18,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     
     if (token.value) {
       config.headers.Authorization = `Bearer ${token.value}`;
-      console.log('🔑 Token attached to request:', token.value.substring(0, 20) + '...');
-    } else {
-      console.log('⚠️ No token found in cookies');
     }
     return config;
   }, (error) => {

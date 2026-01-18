@@ -41,11 +41,9 @@ export const useAuthStore = defineStore('auth', {
           path: '/',
         });
         tokenCookie.value = response.data.access_token;
-        console.log('✅ Token saved:', tokenCookie.value?.substring(0, 20) + '...');
         
         // Save the user data from the response
         this.user = response.data.user; 
-        console.log('✅ User data saved:', this.user);
         
         return true;
       } catch (error) {
