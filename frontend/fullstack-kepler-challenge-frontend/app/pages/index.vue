@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Automatically redirect users from "/" to "/login"
-await navigateTo('/login');
+// Use replace to avoid adding to history and reduce warnings
+await navigateTo('/login', { replace: true });
 </script>
 
 <template>
