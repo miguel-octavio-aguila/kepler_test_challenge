@@ -10,14 +10,17 @@ interface User {
 // Interface for the Login response from NestJS
 interface AuthResponse {
   access_token: string;
+  user: {
+    id: number;
+    email: string;
+    name: string;
+  };
 }
 
 export const useAuthStore = defineStore('auth', {
   // State: The reactive data
   state: () => ({
     user: null as User | null,
-    // Automatically links this state to a cookie named 'auth_token'
-    token: useCookie<string | null>('auth_token'),
   }),
 
   // Actions: Methods to modify state or async operations
@@ -32,11 +35,17 @@ export const useAuthStore = defineStore('auth', {
           password: pass 
         });
 
-        // Save the token. The cookie updates automatically due to useCookie binding
-        this.token = response.data.access_token;
+        // Save the token to cookies
+        const tokenCookie = useCookie<string>('auth_token', {
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+          path: '/',
+        });
+        tokenCookie.value = response.data.access_token;
+        console.log('✅ Token saved:', tokenCookie.value?.substring(0, 20) + '...');
         
-        // We set the user email temporarily since the login endpoint 
-        this.user = { email }; 
+        // Save the user data from the response
+        this.user = response.data.user; 
+        console.log('✅ User data saved:', this.user);
         
         return true;
       } catch (error) {
@@ -66,7 +75,8 @@ export const useAuthStore = defineStore('auth', {
 
     logout() {
       // Clear state and cookie
-      this.token = null;
+      const tokenCookie = useCookie<string | null>('auth_token');
+      tokenCookie.value = null;
       this.user = null;
       
       // Redirect to login page
@@ -77,6 +87,9 @@ export const useAuthStore = defineStore('auth', {
 
   // Getters: Computed properties
   getters: {
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: (state) => {
+      const tokenCookie = useCookie<string | null>('auth_token');
+      return !!tokenCookie.value;
+    },
   }
 });

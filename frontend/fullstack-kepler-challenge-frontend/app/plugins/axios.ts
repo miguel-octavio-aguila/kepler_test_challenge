@@ -18,6 +18,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     
     if (token.value) {
       config.headers.Authorization = `Bearer ${token.value}`;
+      console.log('🔑 Token attached to request:', token.value.substring(0, 20) + '...');
+    } else {
+      console.log('⚠️ No token found in cookies');
     }
     return config;
   }, (error) => {
@@ -28,10 +31,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   api.interceptors.response.use(
     (response) => response,
     (error) => {
-      // If token expires (401), we could redirect to login here
-      if (error.response.status === 401) {
-        const router = useRouter();
-        router.push('/login');
+      // If token expires (401), redirect to login ONLY if not already on login page
+      if (error.response?.status === 401) {
+        // Don't redirect if we're already on the login page
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+          const router = useRouter();
+          router.push('/login');
+        }
       }
       return Promise.reject(error);
     }
