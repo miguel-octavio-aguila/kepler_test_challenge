@@ -7,6 +7,12 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss' // Tailwind CSS
   ],
 
+  tailwindcss: {
+    config: {
+      darkMode: 'class'
+    }
+  },
+
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:3001' // Backend NestJS 

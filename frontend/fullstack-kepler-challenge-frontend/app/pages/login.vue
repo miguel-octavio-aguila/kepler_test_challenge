@@ -41,16 +41,16 @@ const handleSubmit = async () => {
       
       <!-- Header -->
       <div class="text-center">
-        <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+        <h1 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
           {{ isLoginMode ? 'Welcome back' : 'Create an account' }}
         </h1>
-        <p class="mt-2 text-sm text-gray-500">
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
           {{ isLoginMode ? 'Enter your details to access your workspace.' : 'Start organizing your tasks efficiently.' }}
         </p>
       </div>
 
       <!-- Error Alert -->
-      <div v-if="errorMessage" class="bg-red-50 text-red-600 p-3 rounded-md text-sm text-center">
+      <div v-if="errorMessage" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 p-3 rounded-md text-sm text-center">
         {{ errorMessage }}
       </div>
 
@@ -58,37 +58,37 @@ const handleSubmit = async () => {
       <form class="space-y-5" @submit.prevent="handleSubmit">
         
         <div v-if="!isLoginMode" class="space-y-1">
-          <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
           <input
             id="name"
             v-model="form.name"
             type="text"
             required
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3"
+            class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
             placeholder="John Doe"
           />
         </div>
 
         <div class="space-y-1">
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
           <input
             id="email"
             v-model="form.email"
             type="email"
             required
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3"
+            class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
             placeholder="john@example.com"
           />
         </div>
 
         <div class="space-y-1">
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
           <input
             id="password"
             v-model="form.password"
             type="password"
             required
-            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3"
+            class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
             placeholder="••••••••"
           />
         </div>
@@ -108,7 +108,7 @@ const handleSubmit = async () => {
 
       <!-- Toggle Mode -->
       <div class="text-center">
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ isLoginMode ? "New here?" : "Already have an account?" }}
           <button @click="isLoginMode = !isLoginMode" class="font-medium text-primary hover:text-primary-hover transition-colors ml-1">
             {{ isLoginMode ? 'Create an account' : 'Sign in' }}

@@ -1,5 +1,42 @@
+<script setup lang="ts">
+  // Dark mode state
+  const isDarkMode = ref(false);
+
+  // Initialize dark mode (client-side only)
+  onMounted(() => {
+    if (process.client) {
+      const saved = localStorage.getItem('darkMode');
+      isDarkMode.value = saved === 'true';
+      applyDarkMode(isDarkMode.value);
+    }
+  });
+
+  // Apply dark mode to document
+  const applyDarkMode = (value: boolean) => {
+    if (process.client) {
+      if (value) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  };
+
+  // Watch for changes and update DOM
+  watch(isDarkMode, async (newValue) => {
+    if (process.client) {
+      localStorage.setItem('darkMode', String(newValue));
+      await nextTick();
+      applyDarkMode(newValue);
+    }
+  });
+
+  // Provide to children
+  provide('isDarkMode', isDarkMode);
+</script>
+
 <template>
-  <div class="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-primary-light selection:text-primary">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans selection:bg-primary-light selection:text-primary transition-colors duration-200">
     <NuxtLoadingIndicator color="#4f46e5" />
     <NuxtPage />
   </div>

@@ -25,8 +25,8 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
-    <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Add New Task</h3>
+  <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md dark:bg-gray-800 dark:border-gray-700">
+    <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 dark:text-gray-100">Add New Task</h3>
     
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <div class="space-y-4">
@@ -35,7 +35,7 @@ const handleSubmit = async () => {
           v-model="title"
           type="text" 
           placeholder="What needs to be done?" 
-          class="block w-full border-0 border-b-2 border-gray-100 bg-transparent px-0 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:ring-0 sm:text-lg font-medium transition-colors"
+          class="block w-full border-0 border-b-2 border-gray-200 dark:border-gray-700 bg-transparent px-0 py-2.5 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary focus:ring-0 sm:text-lg font-medium transition-colors"
           required
         />
         
@@ -43,7 +43,7 @@ const handleSubmit = async () => {
           v-model="description"
           placeholder="Add details (optional)" 
           rows="2"
-          class="block w-full rounded-lg border-0 bg-gray-50 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary/10 sm:text-sm sm:leading-6 resize-none transition-all"
+          class="block w-full rounded-lg border-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary/30 sm:text-sm sm:leading-6 resize-none transition-all"
         ></textarea>
       </div>
 

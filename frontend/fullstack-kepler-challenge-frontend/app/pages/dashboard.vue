@@ -19,11 +19,11 @@ const authStore = useAuthStore();
       
       <!-- Welcome Section -->
       <div class="mb-10 text-center sm:text-left animate-[fadeIn_0.5s_ease-out]">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
           Good {{ new Date().getHours() < 12 ? 'morning' : 'evening' }}, 
           <span class="text-primary">{{ authStore.user?.name || 'User' }}</span>
         </h1>
-        <p class="mt-3 text-lg text-gray-600">
+        <p class="mt-3 text-lg text-gray-600 dark:text-gray-400">
           You have some tasks waiting for you today.
         </p>
       </div>
@@ -39,7 +39,7 @@ const authStore = useAuthStore();
         <!-- Task List -->
         <section>
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Your Tasks</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Your Tasks</h2>
             <!-- Optional: Filter or Sort controls could go here -->
           </div>
           <TaskList />
