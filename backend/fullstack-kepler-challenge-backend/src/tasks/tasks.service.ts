@@ -14,11 +14,17 @@ export class TasksService {
       userId,
     };
 
-    // If dueDate is provided as a string (YYYY-MM-DD), convert to DateTime at midnight UTC
+    // If dueDate is provided
     if (createTaskDto.dueDate) {
-      // Parse the date and set to midnight UTC to avoid timezone issues
-      const [year, month, day] = createTaskDto.dueDate.split('-').map(Number);
-      data.dueDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+      // Cast to unknown to check type safely, as DTO says Date but runtime might be string
+      const dueDate = createTaskDto.dueDate as unknown;
+
+      if (typeof dueDate === 'string') {
+        // Parse the date string (YYYY-MM-DD) and set to midnight UTC
+        const [year, month, day] = dueDate.split('-').map(Number);
+        data.dueDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+      }
+      // If it's already a Date, it stays as is in 'data' (spread from createTaskDto)
     }
 
     return this.prisma.task.create({
@@ -50,10 +56,21 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
 
+    // If exists, checks for date handling like in create()
+    const data: any = { ...updateTaskDto };
+
+    if (updateTaskDto.dueDate) {
+      const dueDate = updateTaskDto.dueDate as unknown;
+      if (typeof dueDate === 'string') {
+        const [year, month, day] = dueDate.split('-').map(Number);
+        data.dueDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+      }
+    }
+
     // If exists, update it
     return this.prisma.task.update({
       where: { id },
-      data: updateTaskDto,
+      data,
     });
   }
 

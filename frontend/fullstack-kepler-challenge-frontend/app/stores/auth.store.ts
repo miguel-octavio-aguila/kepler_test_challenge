@@ -71,6 +71,23 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async fetchUser() {
+      const tokenCookie = useCookie('auth_token');
+      // If no token, nothing to fetch
+      if (!tokenCookie.value) return;
+
+      try {
+        const { $api } = useNuxtApp();
+        // We expect the backend to return { id, email, name }
+        // The return type should match Partial<User> or similar
+        const response = await $api.get<User>('/auth/profile');
+        this.user = response.data;
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        // If 401, the interceptor will handle redirect
+      }
+    },
+
     logout() {
       // Clear state and cookie
       const tokenCookie = useCookie<string | null>('auth_token');

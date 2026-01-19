@@ -1,13 +1,21 @@
 <script setup lang="ts">
+  import { useAuthStore } from '~/stores/auth.store';
+
   // Dark mode state
   const isDarkMode = ref(false);
 
   // Initialize dark mode (client-side only)
-  onMounted(() => {
+  onMounted(async () => {
     if (process.client) {
       const saved = localStorage.getItem('darkMode');
       isDarkMode.value = saved === 'true';
       applyDarkMode(isDarkMode.value);
+
+      // Restore user session if token exists
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated && !authStore.user) {
+        await authStore.fetchUser();
+      }
     }
   });
 

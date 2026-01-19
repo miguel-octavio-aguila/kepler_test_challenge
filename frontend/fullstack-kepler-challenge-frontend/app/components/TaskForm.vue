@@ -11,19 +11,51 @@ const titleInput = ref<HTMLInputElement | null>(null);
 
 const categories = ['General', 'Work', 'Personal', 'Urgent'];
 
+// Watch for changes in editingTask
+watch(() => tasksStore.editingTask, (newTask) => {
+  if (newTask) {
+    title.value = newTask.title;
+    description.value = newTask.description || '';
+    category.value = newTask.category || 'General';
+    // Format date string for input type="date"
+    dueDate.value = newTask.dueDate ? new Date(newTask.dueDate).toISOString().split('T')[0] : '';
+    // Focus title input
+    setTimeout(() => titleInput.value?.focus(), 100);
+  } else {
+    resetForm();
+  }
+});
+
+const resetForm = () => {
+  title.value = '';
+  description.value = '';
+  category.value = 'General';
+  dueDate.value = '';
+};
+
+const handleCancel = () => {
+  tasksStore.clearEditingTask();
+  resetForm();
+};
+
 const handleSubmit = async () => {
   if (!title.value.trim()) return;
 
   isSubmitting.value = true;
   try {
-    await tasksStore.createTask(title.value, description.value, category.value, dueDate.value);
-    title.value = '';
-    description.value = '';
-    category.value = 'General';
-    dueDate.value = ''; // Reset due date
-    titleInput.value?.focus();
+    if (tasksStore.editingTask) {
+       await tasksStore.updateTask(tasksStore.editingTask.id, {
+        title: title.value,
+        description: description.value,
+        category: category.value,
+        dueDate: dueDate.value
+       });
+    } else {
+       await tasksStore.createTask(title.value, description.value, category.value, dueDate.value);
+    }
+    resetForm();
   } catch (error) {
-    alert('Error creating task');
+    alert('Error saving task');
   } finally {
     isSubmitting.value = false;
   }
@@ -32,7 +64,9 @@ const handleSubmit = async () => {
 
 <template>
   <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md dark:bg-gray-800 dark:border-gray-700">
-    <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 dark:text-gray-100">Add New Task</h3>
+    <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 dark:text-gray-100">
+      {{ tasksStore.editingTask ? 'Edit Task' : 'Add New Task' }}
+    </h3>
     
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <div class="space-y-4">
@@ -78,7 +112,15 @@ const handleSubmit = async () => {
         </div>
       </div>
 
-      <div class="flex justify-end pt-2">
+      <div class="flex justify-end pt-2 gap-2">
+        <button 
+          v-if="tasksStore.editingTask"
+          type="button"
+          @click="handleCancel"
+          class="inline-flex items-center rounded-lg bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
         <button 
           type="submit" 
           :disabled="isSubmitting || !title.trim()"
@@ -90,7 +132,7 @@ const handleSubmit = async () => {
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </span>
-          {{ isSubmitting ? 'Adding...' : 'Add Task' }}
+          {{ isSubmitting ? 'Saving...' : (tasksStore.editingTask ? 'Update Task' : 'Add Task') }}
         </button>
       </div>
     </form>

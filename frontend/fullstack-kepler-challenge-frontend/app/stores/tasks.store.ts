@@ -20,6 +20,7 @@ export const useTasksStore = defineStore('tasks', {
     category: 'all' as string, // New: category filter
     dueDate: '' as string, // New: dueDate filter (YYYY-MM-DD format)
     searchQuery: '',
+    editingTask: null as Task | null,
   }),
 
   actions: {
@@ -66,6 +67,35 @@ export const useTasksStore = defineStore('tasks', {
         this.error = 'Failed to delete task';
         throw err;
       }
+    },
+
+    // PATCH: Update task details (Title, Description, etc)
+    async updateTask(id: number, updates: Partial<Task>) {
+      try {
+        const { $api } = useNuxtApp();
+        const response = await $api.patch<Task>(`/tasks/${id}`, updates);
+
+        // Update local state
+        const index = this.tasks.findIndex(t => t.id === id);
+        if (index !== -1) {
+          this.tasks[index] = response.data;
+        }
+
+        this.clearEditingTask();
+      } catch (err: any) {
+        this.error = 'Failed to update task';
+        throw err;
+      }
+    },
+
+    // Set the task being edited
+    setEditingTask(task: Task) {
+      this.editingTask = { ...task }; // Clone to avoid direct mutation
+    },
+
+    // Clear editing state
+    clearEditingTask() {
+      this.editingTask = null;
     },
 
     // PATCH: Update task status (Toggle Completed)
