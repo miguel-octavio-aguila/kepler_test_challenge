@@ -6,6 +6,7 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
+  category?: string;
   userId: number;
 }
 
@@ -36,11 +37,11 @@ export const useTasksStore = defineStore('tasks', {
     },
 
     // POST: Create a new task
-    async createTask(title: string, description?: string) {
+    async createTask(title: string, description?: string, category?: string) {
       try {
         const { $api } = useNuxtApp();
         // The backend expects title and description
-        const response = await $api.post<Task>('/tasks', { title, description });
+        const response = await $api.post<Task>('/tasks', { title, description, category });
         
         // Optimistic UI: Add directly to the array without reloading
         this.tasks.push(response.data);

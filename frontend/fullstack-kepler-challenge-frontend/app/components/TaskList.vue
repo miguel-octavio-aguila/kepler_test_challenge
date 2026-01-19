@@ -60,6 +60,9 @@ onMounted(() => {
           <p v-if="task.description" class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
             {{ task.description }}
           </p>
+          <span v-if="task.category" class="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 border border-gray-200">
+            {{ task.category }}
+          </span>
         </div>
 
         <button 
