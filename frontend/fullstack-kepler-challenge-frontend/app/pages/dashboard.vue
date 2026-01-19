@@ -15,35 +15,41 @@ const authStore = useAuthStore();
   <div class="min-h-screen pb-20">
     <Navigation />
 
-    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       
-      <!-- Welcome Section -->
-      <div class="mb-10 text-center sm:text-left animate-[fadeIn_0.5s_ease-out]">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
+      <!-- Welcome Section - Centered and Full Width -->
+      <div class="mb-12 text-center animate-[fadeIn_0.5s_ease-out]">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl">
           Good {{ new Date().getHours() < 12 ? 'morning' : 'evening' }}, 
           <span class="text-primary">{{ authStore.user?.name || 'User' }}</span>
         </h1>
-        <p class="mt-3 text-lg text-gray-600 dark:text-gray-400">
-          You have some tasks waiting for you today.
+        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          You have some tasks waiting for you today. Stay organized and productive.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 gap-8 animate-[slideUp_0.5s_ease-out_0.1s_both]">
-        <!-- New Task Form -->
-        <section>
-          <TaskForm />
-        </section>
-
-        <TaskFilters />
-
-        <!-- Task List -->
-        <section>
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Your Tasks</h2>
-            <!-- Optional: Filter or Sort controls could go here -->
+      <!-- Two Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-[slideUp_0.5s_ease-out_0.1s_both]">
+        
+        <!-- Left Column - Task Form -->
+        <section class="space-y-6">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Create New Task</h2>
+            <TaskForm />
           </div>
-          <TaskList />
         </section>
+
+        <!-- Right Column - Filters and Task List -->
+        <section class="space-y-6">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Your Tasks</h2>
+            <TaskFilters />
+            <div class="mt-6">
+              <TaskList />
+            </div>
+          </div>
+        </section>
+
       </div>
 
     </main>
