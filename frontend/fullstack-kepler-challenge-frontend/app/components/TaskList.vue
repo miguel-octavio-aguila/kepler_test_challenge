@@ -3,6 +3,20 @@ import { useTasksStore } from '~/stores/tasks.store';
 
 const tasksStore = useTasksStore();
 
+// Format date without timezone conversion
+const formatDate = (dateString: string) => {
+  // Extract just the date part (YYYY-MM-DD) from ISO string
+  const datePart = dateString.split('T')[0];
+  const [year, month, day] = datePart.split('-');
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+};
+
 onMounted(() => {
   tasksStore.fetchTasks();
 });
@@ -60,9 +74,14 @@ onMounted(() => {
           <p v-if="task.description" class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
             {{ task.description }}
           </p>
-          <span v-if="task.category" class="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600 border border-gray-200">
-            {{ task.category }}
-          </span>
+          <div class="mt-2 flex items-center gap-2">
+            <span v-if="task.category" class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              {{ task.category }}
+            </span>
+            <span v-if="task.dueDate" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              📅 {{ formatDate(task.dueDate) }}
+            </span>
+          </div>
         </div>
 
         <button 

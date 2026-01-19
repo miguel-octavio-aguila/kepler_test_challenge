@@ -1,14 +1,69 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth.store';
-import TaskList from '~/components/TaskList.vue';
-import TaskForm from '~/components/TaskForm.vue';
-import TaskFilters from '~/components/TaskFilters.vue';
+  import { useAuthStore } from '~/stores/auth.store';
+  import { useTasksStore } from '~/stores/tasks.store';
+  import TaskList from '~/components/TaskList.vue';
+  import TaskForm from '~/components/TaskForm.vue';
+  import TaskFilters from '~/components/TaskFilters.vue';
 
-definePageMeta({
-  middleware: 'auth'
-});
+  definePageMeta({
+    middleware: 'auth'
+  });
 
-const authStore = useAuthStore();
+  const authStore = useAuthStore();
+  const tasksStore = useTasksStore(); // Fixed typo: was useTaskStore()
+
+  const router = useRouter();
+  const route = useRoute();
+
+  // Restore filters from URL params on mount
+  onMounted(() => {
+    if (route.query.status) {
+      tasksStore.setStatus(route.query.status as 'all' | 'pending' | 'completed');
+    }
+    if (route.query.category) {
+      tasksStore.setCategory(route.query.category as string);
+    }
+    if (route.query.dueDate) {
+      tasksStore.setDueDate(route.query.dueDate as string);
+    }
+    if (route.query.search) {
+      tasksStore.setSearch(route.query.search as string);
+    }
+  });
+
+  // Update URL when filters change (client-side only)
+  if (process.client) {
+    watch(
+      [() => tasksStore.status, () => tasksStore.category, () => tasksStore.dueDate, () => tasksStore.searchQuery],
+      ([newStatus, newCategory, newDueDate, newSearch]) => {
+        
+        const query: Record<string, string> = {};
+
+        // Only add 'status' if it's not the default ('all')
+        if (newStatus && newStatus !== 'all') {
+          query.status = newStatus;
+        }
+
+        // Only add 'category' if it's not the default ('all')
+        if (newCategory && newCategory !== 'all') {
+          query.category = newCategory;
+        }
+
+        // Only add 'dueDate' if there is a date
+        if (newDueDate) {
+          query.dueDate = newDueDate;
+        }
+
+        // Only add 'search' if there is text
+        if (newSearch) {
+          query.search = newSearch;
+        }
+
+        // router.replace changes the URL without reloading the page
+        router.replace({ query });
+      }
+    );
+  }
 </script>
 
 <template>
@@ -49,9 +104,7 @@ const authStore = useAuthStore();
             </div>
           </div>
         </section>
-
       </div>
-
     </main>
   </div>
 </template>

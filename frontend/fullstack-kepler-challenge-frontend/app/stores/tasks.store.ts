@@ -7,6 +7,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   category?: string;
+  dueDate?: string;
   userId: number;
 }
 
@@ -15,7 +16,9 @@ export const useTasksStore = defineStore('tasks', {
     tasks: [] as Task[], // Local cache of tasks
     isLoading: false,
     error: null as string | null,
-    filterStatus: 'all' as 'all' | 'pending' | 'completed',
+    status: 'all' as 'all' | 'pending' | 'completed', // Renamed from filterStatus
+    category: 'all' as string, // New: category filter
+    dueDate: '' as string, // New: dueDate filter (YYYY-MM-DD format)
     searchQuery: '',
   }),
 
@@ -37,11 +40,11 @@ export const useTasksStore = defineStore('tasks', {
     },
 
     // POST: Create a new task
-    async createTask(title: string, description?: string, category?: string) {
+    async createTask(title: string, description?: string, category?: string, dueDate?: string) {
       try {
         const { $api } = useNuxtApp();
-        // The backend expects title and description
-        const response = await $api.post<Task>('/tasks', { title, description, category });
+        // The backend expects title, description, category, and dueDate
+        const response = await $api.post<Task>('/tasks', { title, description, category, dueDate });
         
         // Optimistic UI: Add directly to the array without reloading
         this.tasks.push(response.data);
@@ -82,24 +85,54 @@ export const useTasksStore = defineStore('tasks', {
       }
     },
 
-    setFilter(status: 'all' | 'pending' | 'completed') {
-    this.filterStatus = status;
+    // Set status filter (renamed from setFilter)
+    setStatus(status: 'all' | 'pending' | 'completed') {
+      this.status = status;
     },
 
+    // Set category filter
+    setCategory(category: string) {
+      this.category = category;
+    },
+
+    // Set dueDate filter
+    setDueDate(dueDate: string) {
+      this.dueDate = dueDate;
+    },
+
+    // Set search query
     setSearch(query: string) {
-    this.searchQuery = query;
+      this.searchQuery = query;
+    },
+
+    // Reset all filters
+    resetFilters() {
+      this.status = 'all';
+      this.category = 'all';
+      this.dueDate = '';
+      this.searchQuery = '';
     }
   },
 
   getters: {
-    // Useful for filtering tasks based on status and search query
+    // Useful for filtering tasks based on status, category, dueDate and search query
     filteredTasks: (state) => {
       return state.tasks.filter(task => {
         // Filter by status
         const matchesStatus = 
-          state.filterStatus === 'all' ? true :
-          state.filterStatus === 'completed' ? task.completed :
+          state.status === 'all' ? true :
+          state.status === 'completed' ? task.completed :
           !task.completed;
+
+        // Filter by category
+        const matchesCategory = 
+          state.category === 'all' ? true :
+          task.category === state.category;
+
+        // Filter by dueDate - compare only date part (YYYY-MM-DD)
+        const matchesDueDate = 
+          !state.dueDate ? true :
+          task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] === state.dueDate : false;
 
         // Filter by search query
         const query = state.searchQuery.toLowerCase();
@@ -107,7 +140,7 @@ export const useTasksStore = defineStore('tasks', {
           task.title.toLowerCase().includes(query) || 
           (task.description && task.description.toLowerCase().includes(query));
 
-        return matchesStatus && matchesSearch;
+        return matchesStatus && matchesCategory && matchesDueDate && matchesSearch;
       });
     },
   

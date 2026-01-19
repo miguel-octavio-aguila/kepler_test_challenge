@@ -5,20 +5,22 @@ const tasksStore = useTasksStore();
 const title = ref('');
 const description = ref('');
 const category = ref('General');
+const dueDate = ref(''); // New: due date field
 const isSubmitting = ref(false);
 const titleInput = ref<HTMLInputElement | null>(null);
 
-const categories = ['General', 'Trabajo', 'Personal', 'Urgente'];
+const categories = ['General', 'Work', 'Personal', 'Urgent'];
 
 const handleSubmit = async () => {
   if (!title.value.trim()) return;
 
   isSubmitting.value = true;
   try {
-    await tasksStore.createTask(title.value, description.value, category.value);
+    await tasksStore.createTask(title.value, description.value, category.value, dueDate.value);
     title.value = '';
     description.value = '';
     category.value = 'General';
+    dueDate.value = ''; // Reset due date
     titleInput.value?.focus();
   } catch (error) {
     alert('Error creating task');
@@ -55,7 +57,7 @@ const handleSubmit = async () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
           <select 
             v-model="category"
             class="block w-full rounded-lg border-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary/30 sm:text-sm sm:leading-6 transition-all"
@@ -64,6 +66,15 @@ const handleSubmit = async () => {
               {{ category }}
             </option>
           </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
+          <input 
+            v-model="dueDate"
+            type="date"
+            class="block w-full rounded-lg border-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-primary/30 sm:text-sm sm:leading-6 transition-all"
+          />
         </div>
       </div>
 

@@ -8,11 +8,21 @@ export class TasksService {
   constructor(private prisma: PrismaService) {}
 
   create(createTaskDto: CreateTaskDto, userId: number) {
+    // Convert dueDate string to DateTime if provided
+    const data: any = {
+      ...createTaskDto,
+      userId,
+    };
+
+    // If dueDate is provided as a string (YYYY-MM-DD), convert to DateTime at midnight UTC
+    if (createTaskDto.dueDate) {
+      // Parse the date and set to midnight UTC to avoid timezone issues
+      const [year, month, day] = createTaskDto.dueDate.split('-').map(Number);
+      data.dueDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    }
+
     return this.prisma.task.create({
-      data: {
-        ...createTaskDto,
-        userId,
-      },
+      data,
     });
   }
 
