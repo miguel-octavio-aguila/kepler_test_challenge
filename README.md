@@ -1,11 +1,6 @@
 # Full Stack To-Do List Application
 
 A modern, full-stack task management application built with **NestJS** (backend) and **Nuxt 4 + Vue 3** (frontend). This project features JWT authentication, a SQLite database with Prisma ORM, and a responsive UI with TailwindCSS.
-
-## 📸 Screenshot
-
-![Dashboard Screenshot](./screenshot.png)
-
 ---
 
 ## 🚀 Features
@@ -121,6 +116,7 @@ A modern, full-stack task management application built with **NestJS** (backend)
    ```env
    DATABASE_URL="file:./dev.db"
    JWT_SECRET="your-secure-secret-key"
+   PORT=3001
    ```
 
 4. Generate Prisma client and run migrations:
@@ -136,7 +132,7 @@ A modern, full-stack task management application built with **NestJS** (backend)
    npm run start:dev
    ```
 
-   The backend will be available at `http://localhost:3000`
+   You have to add a port in your .env file
 
 ### Frontend Setup
 
@@ -155,7 +151,7 @@ A modern, full-stack task management application built with **NestJS** (backend)
 3. Create a `.env` file:
 
    ```env
-   API_BASE_URL=http://localhost:3000
+   API_BASE_URL=http://localhost:3001
    ```
 
 4. Start the development server:
@@ -164,7 +160,7 @@ A modern, full-stack task management application built with **NestJS** (backend)
    npm run dev
    ```
 
-   The frontend will be available at `http://localhost:3001`
+   The frontend will be available at `http://localhost:3000`
 
 ---
 
@@ -212,18 +208,6 @@ Nuxt 4 brings improved performance and Vue 3 Composition API support. Pinia prov
 ### Why TailwindCSS?
 
 TailwindCSS enables rapid UI development with utility classes, consistent design tokens, and built-in dark mode support without writing custom CSS.
-
----
-
-## 🧪 Running Tests
-
-### Backend
-
-```bash
-cd backend/fullstack-kepler-challenge-backend
-npm run test
-npm run test:e2e
-```
 
 ---
 
